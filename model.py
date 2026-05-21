@@ -1,0 +1,117 @@
+"""
+从零实现ResNet-18
+核心组件：残差块、BatchNorm、全局平均池化
+"""
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class BasicBlock(nn.Module):
+    """ResNet基本残差块（用于ResNet-18/34）"""
+    expansion = 1
+
+    def __init__(self, in_channels, out_channels, stride=1):
+        super(BasicBlock, self).__init__()
+
+        # 主路径：两个3x3卷积
+        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=3,
+                               stride=stride, padding=1, bias=False)
+        self.bn1 = nn.BatchNorm2d(out_channels)
+        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=3,
+                               stride=1, padding=1, bias=False)
+        self.bn2 = nn.BatchNorm2d(out_channels)
+
+        # 跳跃连接：如果需要维度匹配，使用1x1卷积调整
+        self.shortcut = nn.Sequential()
+        if stride != 1 or in_channels != out_channels * self.expansion:
+            self.shortcut = nn.Sequential(
+                nn.Conv2d(in_channels, out_channels * self.expansion,
+                          kernel_size=1, stride=stride, bias=False),
+                nn.BatchNorm2d(out_channels * self.expansion)
+            )
+
+    def forward(self, x):
+        identity = self.shortcut(x)  # 跳跃连接
+
+        out = F.relu(self.bn1(self.conv1(x)))
+        out = self.bn2(self.conv2(out))
+        out += identity  # 残差相加
+        out = F.relu(out)
+
+        return out
+
+
+class ResNet(nn.Module):
+    """ResNet主类"""
+
+    def __init__(self, block, num_blocks, num_classes=10):
+        super(ResNet, self).__init__()
+        self.in_channels = 64
+
+        # 初始卷积层
+        self.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
+        self.bn1 = nn.BatchNorm2d(64)
+
+        # 四个残差阶段
+        self.layer1 = self._make_layer(block, 64, num_blocks[0], stride=1)
+        self.layer2 = self._make_layer(block, 128, num_blocks[1], stride=2)
+        self.layer3 = self._make_layer(block, 256, num_blocks[2], stride=2)
+        self.layer4 = self._make_layer(block, 512, num_blocks[3], stride=2)
+
+        # 分类头
+        self.avg_pool = nn.AdaptiveAvgPool2d((1, 1))
+        self.fc = nn.Linear(512 * block.expansion, num_classes)
+
+    def _make_layer(self, block, out_channels, num_blocks, stride):
+        strides = [stride] + [1] * (num_blocks - 1)
+        layers = []
+        for stride in strides:
+            layers.append(block(self.in_channels, out_channels, stride))
+            self.in_channels = out_channels * block.expansion
+        return nn.Sequential(*layers)
+
+    def forward(self, x):
+        out = F.relu(self.bn1(self.conv1(x)))
+        out = self.layer1(out)
+        out = self.layer2(out)
+        out = self.layer3(out)
+        out = self.layer4(out)
+        out = self.avg_pool(out)
+        out = torch.flatten(out, 1)
+        out = self.fc(out)
+        return out
+
+
+def ResNet18():
+    """创建ResNet-18模型"""
+    return ResNet(BasicBlock, [2, 2, 2, 2])
+
+
+class PlainCNN(nn.Module):
+    """无残差连接的普通CNN（用于对比实验）"""
+
+    def __init__(self, num_classes=10):
+        super(PlainCNN, self).__init__()
+
+        self.conv1 = nn.Conv2d(3, 64, 3, padding=1)
+        self.bn1 = nn.BatchNorm2d(64)
+        self.conv2 = nn.Conv2d(64, 128, 3, stride=2, padding=1)
+        self.bn2 = nn.BatchNorm2d(128)
+        self.conv3 = nn.Conv2d(128, 256, 3, stride=2, padding=1)
+        self.bn3 = nn.BatchNorm2d(256)
+        self.conv4 = nn.Conv2d(256, 512, 3, stride=2, padding=1)
+        self.bn4 = nn.BatchNorm2d(512)
+
+        self.avg_pool = nn.AdaptiveAvgPool2d((1, 1))
+        self.fc = nn.Linear(512, num_classes)
+
+    def forward(self, x):
+        x = F.relu(self.bn1(self.conv1(x)))
+        x = F.relu(self.bn2(self.conv2(x)))
+        x = F.relu(self.bn3(self.conv3(x)))
+        x = F.relu(self.bn4(self.conv4(x)))
+        x = self.avg_pool(x)
+        x = torch.flatten(x, 1)
+        x = self.fc(x)
+        return x
