@@ -185,7 +185,7 @@ if __name__ == '__main__':
 
     # 实验2：ResNet-18（有残差连接）
     resnet18 = ResNet18()
-    results.append(train_model(resnet18, 'ResNet-18 (有残差)', 'checkpoints/resnet18.pth'))
+    results.append(train_model(resnet18, 'ResNet18 (有残差)', 'checkpoints/resnet18.pth'))
 
     # 绘制对比图
     plot_comparison(results)
