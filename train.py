@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
-from model import ResNet18, PlainCNN
+from model import ResNet18, PlainCNN, Plain18
 
 # 设备配置
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -186,6 +186,13 @@ if __name__ == '__main__':
     # 实验2：ResNet-18（有残差连接）
     resnet18 = ResNet18()
     results.append(train_model(resnet18, 'ResNet18 (有残差)', 'checkpoints/resnet18.pth'))
+
+    # 实验3: ReLU + BN
+    model = Plain18(use_bn=True, activation='relu')
+    results.append(train_model(plain18, 'Plain18 (无残差, 18层)', 'checkpoints/plain18.pth'))
+    # # 实验3: Sigmoid + 无BN
+    # model = Plain18(use_bn=False, activation='sigmoid')
+    # results.append(train_model(plain18, 'Plain18 (无残差, 18层)', 'checkpoints/plain18.pth'))
 
     # 绘制对比图
     plot_comparison(results)

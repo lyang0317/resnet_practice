@@ -115,3 +115,61 @@ class PlainCNN(nn.Module):
         x = torch.flatten(x, 1)
         x = self.fc(x)
         return x
+
+
+class Plain18(nn.Module):
+    """18层普通CNN，结构与ResNet-18类似但无残差连接"""
+
+    def __init__(self, use_bn=True, activation='relu', num_classes=10):
+        super(Plain18, self).__init__()
+
+        self.use_bn = use_bn
+        self.activation = activation
+
+        # 选择激活函数
+        if activation == 'relu':
+            self.act = nn.ReLU(inplace=True)
+        elif activation == 'sigmoid':
+            self.act = nn.Sigmoid()
+
+        # 初始卷积层（和ResNet一样）
+        self.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=not use_bn)
+        self.bn1 = nn.BatchNorm2d(64) if use_bn else nn.Identity()
+
+        # 4个阶段，每个阶段4层卷积（共16层）+ 初始1层 + 全连接1层 = 18层
+        # 每个阶段内的卷积层数 = num_blocks × 2
+        self.layer1 = self._make_layer(64, 64, num_blocks=4, stride=1)
+        self.layer2 = self._make_layer(64, 128, num_blocks=4, stride=2)
+        self.layer3 = self._make_layer(128, 256, num_blocks=4, stride=2)
+        self.layer4 = self._make_layer(256, 512, num_blocks=4, stride=2)
+
+        # 分类头
+        self.avg_pool = nn.AdaptiveAvgPool2d((1, 1))
+        self.fc = nn.Linear(512, num_classes)
+
+    def _make_layer(self, in_channels, out_channels, num_blocks, stride):
+        """创建连续的卷积层组（无残差）"""
+        layers = []
+
+        for i in range(num_blocks):
+            in_ch = in_channels if i == 0 else out_channels
+            s = stride if i == 0 else 1
+
+            layers.append(nn.Conv2d(in_ch, out_channels, kernel_size=3,
+                                    stride=s, padding=1, bias=not self.use_bn))
+            if self.use_bn:
+                layers.append(nn.BatchNorm2d(out_channels))
+            layers.append(self.act)
+
+        return nn.Sequential(*layers)
+
+    def forward(self, x):
+        out = self.act(self.bn1(self.conv1(x)))
+        out = self.layer1(out)
+        out = self.layer2(out)
+        out = self.layer3(out)
+        out = self.layer4(out)
+        out = self.avg_pool(out)
+        out = torch.flatten(out, 1)
+        out = self.fc(out)
+        return out
