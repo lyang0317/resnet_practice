@@ -120,7 +120,7 @@ class PlainCNN(nn.Module):
 class Plain18(nn.Module):
     """18层普通CNN，结构与ResNet-18类似但无残差连接"""
 
-    def __init__(self, use_bn=True, activation='relu', num_block=4, num_classes=10):
+    def __init__(self, use_bn=True, activation='relu', num_blocks=4, num_classes=10):
         super(Plain18, self).__init__()
 
         self.use_bn = use_bn
