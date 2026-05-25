@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
-from model import ResNet18, PlainCNN, Plain18
+from model import ResNet18, PlainCNN, Plain18, Plain50, ResNet50, Plain50_Bottleneck
 
 # 设备配置
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
