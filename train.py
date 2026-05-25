@@ -179,6 +179,11 @@ if __name__ == '__main__':
     # 运行对比实验
     results = []
 
+    # ========== 新增18层对比 ==========
+    print("\n" + "="*60)
+    print("开始18层深度对比实验")
+    print("="*60)
+
     # 实验1：普通CNN（无残差连接）
     plain_cnn = PlainCNN()
     results.append(train_model(plain_cnn, 'PlainCNN (无残差)', 'checkpoints/plain_cnn.pth'))
@@ -188,11 +193,29 @@ if __name__ == '__main__':
     results.append(train_model(resnet18, 'ResNet18 (有残差)', 'checkpoints/resnet18.pth'))
 
     # 实验3: ReLU + BN
-    model = Plain18(use_bn=True, activation='relu')
+    model = Plain18(use_bn=True, activation='relu', num_block=4)
     results.append(train_model(plain18, 'Plain18 (无残差, 18层)', 'checkpoints/plain18.pth'))
+
+    # 实验4: ReLU + BN + 4层
+    model = Plain18(use_bn=True, activation='relu', num_block=1)
+    results.append(train_model(plain18, 'Plain18 (无残差, 4层)', 'checkpoints/plain4.pth'))
     # # 实验3: Sigmoid + 无BN
     # model = Plain18(use_bn=False, activation='sigmoid')
     # results.append(train_model(plain18, 'Plain18 (无残差, 18层)', 'checkpoints/plain18.pth'))
+
+    # ========== 新增50层对比 ==========
+    print("\n" + "="*60)
+    print("开始50层深度对比实验")
+    print("="*60)
+
+    plain50 = Plain50()
+    results.append(train_model(plain50, 'Plain50 (50层, 无残差)', 'checkpoints/plain50.pth'))
+
+    resnet50 = ResNet50()
+    results.append(train_model(resnet50, 'ResNet50 (50层, 有残差)', 'checkpoints/resnet50.pth'))
+
+    plain50_Bottleneck = Plain50_Bottleneck()
+    results.append(train_model(plain50_Bottleneck, 'Plain50_Bottleneck (50层, 有残差)', 'checkpoints/plain50_Bottleneck.pth'))
 
     # 绘制对比图
     plot_comparison(results)
