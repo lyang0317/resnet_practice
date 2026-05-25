@@ -22,7 +22,7 @@ print(f'使用设备: {device}')
 
 # 超参数
 BATCH_SIZE = 128
-EPOCHS = 50
+EPOCHS = 5
 LEARNING_RATE = 0.1
 MOMENTUM = 0.9
 WEIGHT_DECAY = 5e-4
