@@ -193,7 +193,7 @@ if __name__ == '__main__':
     results.append(train_model(resnet18, 'ResNet18 (有残差)', 'checkpoints/resnet18.pth'))
 
     # 实验3: ReLU + BN
-    model = Plain18(use_bn=True, activation='relu', num_block=4)
+    plain18 = Plain18(use_bn=True, activation='relu', num_block=4)
     results.append(train_model(plain18, 'Plain18 (无残差, 18层)', 'checkpoints/plain18.pth'))
 
     # 实验4: ReLU + BN + 4层
