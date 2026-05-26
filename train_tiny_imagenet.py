@@ -14,6 +14,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
+from torchvision.datasets import ImageFolder
+
 from model import ResNet18, PlainCNN, Plain18, Plain50, ResNet50, Plain50_Bottleneck
 
 # 设备配置
@@ -29,24 +31,25 @@ WEIGHT_DECAY = 5e-4
 
 # 数据预处理
 train_transform = transforms.Compose([
-    transforms.RandomCrop(32, padding=4),
-    transforms.RandomHorizontalFlip(),
+    transforms.RandomResizedCrop(64),      # 随机裁剪到 64x64
+    transforms.RandomHorizontalFlip(),     # 随机翻转
+    transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2), # 颜色抖动
     transforms.ToTensor(),
-    transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
+    transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                         std=[0.229, 0.224, 0.225]) # ImageNet 的标准化参数
 ])
 
-test_transform = transforms.Compose([
+val_transform = transforms.Compose([
+    transforms.Resize(64),                 # 验证集统一缩放
+    transforms.CenterCrop(64),             # 中心裁剪
     transforms.ToTensor(),
-    transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010))
+    transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                         std=[0.229, 0.224, 0.225])
 ])
 
 # 加载数据
-train_dataset = torchvision.datasets.CIFAR10(
-    root='./data', train=True, download=True, transform=train_transform
-)
-test_dataset = torchvision.datasets.CIFAR10(
-    root='./data', train=False, download=True, transform=test_transform
-)
+train_dataset = ImageFolder(root='./data/tiny-imagenet-200/train', transform=train_transform)
+test_dataset = ImageFolder(root='./data/tiny-imagenet-200/val', transform=val_transform)
 
 train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=2)
 test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=2)
@@ -185,27 +188,27 @@ if __name__ == '__main__':
     print("="*60)
 
     # 实验1：普通CNN（无残差连接）
-    plain_cnn = PlainCNN()
+    plain_cnn = PlainCNN(num_classes=200)
     results.append(train_model(plain_cnn, 'PlainCNN (NO Resnet)', 'checkpoints/plain_cnn.pth'))
 
     # 实验4: ReLU + BN + 4层
-    model = Plain18(use_bn=True, activation='relu', num_blocks=1)
+    model = Plain18(use_bn=True, activation='relu', num_blocks=1, num_classes=200)
     results.append(train_model(plain18, 'Plain18 (NO Resnet, 4 layers)', 'checkpoints/plain4.pth'))
 
     # 实验3: ReLU + BN
-    plain18 = Plain18(use_bn=False, activation='sigmoid', num_blocks=4)
+    plain18 = Plain18(use_bn=False, activation='sigmoid', num_blocks=4, num_classes=200)
     results.append(train_model(plain18, 'Plain18 (NO Resnet, 18 layers, not bn, sigmoid)', 'checkpoints/plain18.pth'))
 
     # 实验3: ReLU + BN
-    plain18 = Plain18(use_bn=False, activation='relu', num_blocks=4)
+    plain18 = Plain18(use_bn=False, activation='relu', num_blocks=4, num_classes=200)
     results.append(train_model(plain18, 'Plain18 (NO Resnet, 18 layers, not bn, relu)', 'checkpoints/plain18.pth'))
 
     # 实验3: ReLU + BN
-    plain18 = Plain18(use_bn=True, activation='relu', num_blocks=4)
+    plain18 = Plain18(use_bn=True, activation='relu', num_blocks=4, num_classes=200)
     results.append(train_model(plain18, 'Plain18 (NO Resnet, 18 layers)', 'checkpoints/plain18.pth'))
 
     # 实验2：ResNet-18（有残差连接）
-    resnet18 = ResNet18()
+    resnet18 = ResNet18(num_classes=200)
     results.append(train_model(resnet18, 'ResNet18 (Resnet)', 'checkpoints/resnet18.pth'))
 
     # # 实验3: Sigmoid + 无BN
@@ -217,13 +220,13 @@ if __name__ == '__main__':
     print("开始50层深度对比实验")
     print("="*60)
 
-    plain50 = Plain50()
+    plain50 = Plain50(num_classes=200)
     results.append(train_model(plain50, 'Plain50 (NO Resnet, 50layers)', 'checkpoints/plain50.pth'))
 
-    plain50_Bottleneck = Plain50_Bottleneck()
+    plain50_Bottleneck = Plain50_Bottleneck(num_classes=200)
     results.append(train_model(plain50_Bottleneck, 'Plain50_Bottleneck (NO Resnet, like bottle block, 50layers)', 'checkpoints/plain50_Bottleneck.pth'))
 
-    resnet50 = ResNet50()
+    resnet50 = ResNet50(num_classes=200)
     results.append(train_model(resnet50, 'ResNet50 (Resnet, 50 layers', 'checkpoints/resnet50.pth'))
 
     # 绘制对比图

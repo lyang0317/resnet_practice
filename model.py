@@ -42,10 +42,10 @@ class BasicBlock(nn.Module):
         return out
 
 
-class ResNet(nn.Module):
+class ResNet18(nn.Module):
     """ResNet主类"""
 
-    def __init__(self, block, num_blocks, num_classes=10):
+    def __init__(self, num_classes=10):
         super(ResNet, self).__init__()
         self.in_channels = 64
 
@@ -54,20 +54,20 @@ class ResNet(nn.Module):
         self.bn1 = nn.BatchNorm2d(64)
 
         # 四个残差阶段
-        self.layer1 = self._make_layer(block, 64, num_blocks[0], stride=1)
-        self.layer2 = self._make_layer(block, 128, num_blocks[1], stride=2)
-        self.layer3 = self._make_layer(block, 256, num_blocks[2], stride=2)
-        self.layer4 = self._make_layer(block, 512, num_blocks[3], stride=2)
+        self.layer1 = self._make_layer(64, 2, stride=1)
+        self.layer2 = self._make_layer(128, 2, stride=2)
+        self.layer3 = self._make_layer(256, 2, stride=2)
+        self.layer4 = self._make_layer(512, 2, stride=2)
 
         # 分类头
         self.avg_pool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(512 * block.expansion, num_classes)
+        self.fc = nn.Linear(512 * 1, num_classes)
 
-    def _make_layer(self, block, out_channels, num_blocks, stride):
+    def _make_layer(self, out_channels, num_blocks, stride):
         strides = [stride] + [1] * (num_blocks - 1)
         layers = []
         for stride in strides:
-            layers.append(block(self.in_channels, out_channels, stride))
+            layers.append(BasicBlock(self.in_channels, out_channels, stride))
             self.in_channels = out_channels * block.expansion
         return nn.Sequential(*layers)
 
@@ -81,11 +81,6 @@ class ResNet(nn.Module):
         out = torch.flatten(out, 1)
         out = self.fc(out)
         return out
-
-
-def ResNet18():
-    """创建ResNet-18模型"""
-    return ResNet(BasicBlock, [2, 2, 2, 2])
 
 
 class PlainCNN(nn.Module):
