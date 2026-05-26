@@ -68,7 +68,7 @@ class ResNet18(nn.Module):
         layers = []
         for stride in strides:
             layers.append(BasicBlock(self.in_channels, out_channels, stride))
-            self.in_channels = out_channels * block.expansion
+            self.in_channels = out_channels * BasicBlock.expansion
         return nn.Sequential(*layers)
 
     def forward(self, x):
