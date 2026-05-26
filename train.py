@@ -186,27 +186,27 @@ if __name__ == '__main__':
 
     # 实验1：普通CNN（无残差连接）
     plain_cnn = PlainCNN()
-    results.append(train_model(plain_cnn, 'PlainCNN (无残差)', 'checkpoints/plain_cnn.pth'))
+    results.append(train_model(plain_cnn, 'PlainCNN (NO Resnet)', 'checkpoints/plain_cnn.pth'))
 
     # 实验4: ReLU + BN + 4层
     model = Plain18(use_bn=True, activation='relu', num_blocks=1)
-    results.append(train_model(plain18, 'Plain18 (无残差, 4层)', 'checkpoints/plain4.pth'))
+    results.append(train_model(plain18, 'Plain18 (NO Resnet, 4 layers)', 'checkpoints/plain4.pth'))
 
     # 实验3: ReLU + BN
     plain18 = Plain18(use_bn=False, activation='sigmoid', num_blocks=4)
-    results.append(train_model(plain18, 'Plain18 (无残差, 18层, not bn, sigmoid)', 'checkpoints/plain18.pth'))
+    results.append(train_model(plain18, 'Plain18 (NO Resnet, 18 layers, not bn, sigmoid)', 'checkpoints/plain18.pth'))
 
     # 实验3: ReLU + BN
     plain18 = Plain18(use_bn=False, activation='relu', num_blocks=4)
-    results.append(train_model(plain18, 'Plain18 (无残差, 18层, not bn, relu)', 'checkpoints/plain18.pth'))
+    results.append(train_model(plain18, 'Plain18 (NO Resnet, 18 layers, not bn, relu)', 'checkpoints/plain18.pth'))
 
     # 实验3: ReLU + BN
     plain18 = Plain18(use_bn=True, activation='relu', num_blocks=4)
-    results.append(train_model(plain18, 'Plain18 (无残差, 18层)', 'checkpoints/plain18.pth'))
+    results.append(train_model(plain18, 'Plain18 (NO Resnet, 18 layers)', 'checkpoints/plain18.pth'))
 
     # 实验2：ResNet-18（有残差连接）
     resnet18 = ResNet18()
-    results.append(train_model(resnet18, 'ResNet18 (有残差)', 'checkpoints/resnet18.pth'))
+    results.append(train_model(resnet18, 'ResNet18 (Resnet)', 'checkpoints/resnet18.pth'))
 
     # # 实验3: Sigmoid + 无BN
     # model = Plain18(use_bn=False, activation='sigmoid')
@@ -218,13 +218,13 @@ if __name__ == '__main__':
     print("="*60)
 
     plain50 = Plain50()
-    results.append(train_model(plain50, 'Plain50 (50层, 无残差)', 'checkpoints/plain50.pth'))
+    results.append(train_model(plain50, 'Plain50 (NO Resnet, 50layers)', 'checkpoints/plain50.pth'))
 
     plain50_Bottleneck = Plain50_Bottleneck()
-    results.append(train_model(plain50_Bottleneck, 'Plain50_Bottleneck (类比瓶颈块, 50层, 无残差)', 'checkpoints/plain50_Bottleneck.pth'))
+    results.append(train_model(plain50_Bottleneck, 'Plain50_Bottleneck (NO Resnet, like bottle block, 50layers)', 'checkpoints/plain50_Bottleneck.pth'))
 
     resnet50 = ResNet50()
-    results.append(train_model(resnet50, 'ResNet50 (50层, 有残差)', 'checkpoints/resnet50.pth'))
+    results.append(train_model(resnet50, 'ResNet50 (Resnet, 50 layers', 'checkpoints/resnet50.pth'))
 
     # 绘制对比图
     plot_comparison(results)
