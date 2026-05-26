@@ -188,17 +188,26 @@ if __name__ == '__main__':
     plain_cnn = PlainCNN()
     results.append(train_model(plain_cnn, 'PlainCNN (无残差)', 'checkpoints/plain_cnn.pth'))
 
-    # 实验2：ResNet-18（有残差连接）
-    resnet18 = ResNet18()
-    results.append(train_model(resnet18, 'ResNet18 (有残差)', 'checkpoints/resnet18.pth'))
+    # 实验4: ReLU + BN + 4层
+    model = Plain18(use_bn=True, activation='relu', num_blocks=1)
+    results.append(train_model(plain18, 'Plain18 (无残差, 4层)', 'checkpoints/plain4.pth'))
+
+    # 实验3: ReLU + BN
+    plain18 = Plain18(use_bn=False, activation='sigmoid', num_blocks=4)
+    results.append(train_model(plain18, 'Plain18 (无残差, 18层, not bn, sigmoid)', 'checkpoints/plain18.pth'))
+
+    # 实验3: ReLU + BN
+    plain18 = Plain18(use_bn=False, activation='relu', num_blocks=4)
+    results.append(train_model(plain18, 'Plain18 (无残差, 18层, not bn, relu)', 'checkpoints/plain18.pth'))
 
     # 实验3: ReLU + BN
     plain18 = Plain18(use_bn=True, activation='relu', num_blocks=4)
     results.append(train_model(plain18, 'Plain18 (无残差, 18层)', 'checkpoints/plain18.pth'))
 
-    # 实验4: ReLU + BN + 4层
-    model = Plain18(use_bn=True, activation='relu', num_blocks=1)
-    results.append(train_model(plain18, 'Plain18 (无残差, 4层)', 'checkpoints/plain4.pth'))
+    # 实验2：ResNet-18（有残差连接）
+    resnet18 = ResNet18()
+    results.append(train_model(resnet18, 'ResNet18 (有残差)', 'checkpoints/resnet18.pth'))
+
     # # 实验3: Sigmoid + 无BN
     # model = Plain18(use_bn=False, activation='sigmoid')
     # results.append(train_model(plain18, 'Plain18 (无残差, 18层)', 'checkpoints/plain18.pth'))
@@ -211,11 +220,11 @@ if __name__ == '__main__':
     plain50 = Plain50()
     results.append(train_model(plain50, 'Plain50 (50层, 无残差)', 'checkpoints/plain50.pth'))
 
+    plain50_Bottleneck = Plain50_Bottleneck()
+    results.append(train_model(plain50_Bottleneck, 'Plain50_Bottleneck (类比瓶颈块, 50层, 无残差)', 'checkpoints/plain50_Bottleneck.pth'))
+
     resnet50 = ResNet50()
     results.append(train_model(resnet50, 'ResNet50 (50层, 有残差)', 'checkpoints/resnet50.pth'))
-
-    plain50_Bottleneck = Plain50_Bottleneck()
-    results.append(train_model(plain50_Bottleneck, 'Plain50_Bottleneck (50层, 无残差)', 'checkpoints/plain50_Bottleneck.pth'))
 
     # 绘制对比图
     plot_comparison(results)
