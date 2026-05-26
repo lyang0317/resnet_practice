@@ -22,7 +22,7 @@ print(f'使用设备: {device}')
 
 # 超参数
 BATCH_SIZE = 128
-EPOCHS = 50
+EPOCHS = 30
 LEARNING_RATE = 0.1
 MOMENTUM = 0.9
 WEIGHT_DECAY = 5e-4
@@ -189,7 +189,7 @@ if __name__ == '__main__':
     results.append(train_model(plain_cnn, 'PlainCNN (NO Resnet)', 'checkpoints/plain_cnn.pth'))
 
     # 实验4: ReLU + BN + 4层
-    model = Plain18(use_bn=True, activation='relu', num_blocks=1)
+    plain18 = Plain18(use_bn=True, activation='relu', num_blocks=1)
     results.append(train_model(plain18, 'Plain18 (NO Resnet, 4 layers)', 'checkpoints/plain4.pth'))
 
     # 实验3: ReLU + BN
@@ -218,10 +218,10 @@ if __name__ == '__main__':
     print("="*60)
 
     plain50 = Plain50()
-    results.append(train_model(plain50, 'Plain50 (NO Resnet, 50layers)', 'checkpoints/plain50.pth'))
+    results.append(train_model(plain50, 'Plain50 (NO Resnet, 50 layers)', 'checkpoints/plain50.pth'))
 
     plain50_Bottleneck = Plain50_Bottleneck()
-    results.append(train_model(plain50_Bottleneck, 'Plain50_Bottleneck (NO Resnet, like bottle block, 50layers)', 'checkpoints/plain50_Bottleneck.pth'))
+    results.append(train_model(plain50_Bottleneck, 'Plain50_Bottleneck (NO Resnet, like bottle block, 50 layers)', 'checkpoints/plain50_Bottleneck.pth'))
 
     resnet50 = ResNet50()
     results.append(train_model(resnet50, 'ResNet50 (Resnet, 50 layers', 'checkpoints/resnet50.pth'))
