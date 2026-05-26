@@ -170,14 +170,14 @@ def plot_comparison(results):
     axes[1].grid(True)
 
     plt.tight_layout()
-    plt.savefig('comparison.png', dpi=150)
+    plt.savefig('comparison_tiny_imagenet.png', dpi=150)
     plt.show()
-    print("对比图已保存为 comparison.png")
+    print("对比图已保存为 comparison_tiny_imagenet.png")
 
 
 if __name__ == '__main__':
     # 创建保存目录
-    os.makedirs('checkpoints', exist_ok=True)
+    os.makedirs('checkpoints_tiny_imagenet', exist_ok=True)
 
     # 运行对比实验
     results = []
@@ -189,27 +189,27 @@ if __name__ == '__main__':
 
     # 实验1：普通CNN（无残差连接）
     plain_cnn = PlainCNN(num_classes=200)
-    results.append(train_model(plain_cnn, 'PlainCNN (NO Resnet)', 'checkpoints/plain_cnn.pth'))
+    results.append(train_model(plain_cnn, 'PlainCNN (NO Resnet)', 'checkpoints_tiny_imagenet/plain_cnn.pth'))
 
     # 实验4: ReLU + BN + 4层
     model = Plain18(use_bn=True, activation='relu', num_blocks=1, num_classes=200)
-    results.append(train_model(plain18, 'Plain18 (NO Resnet, 4 layers)', 'checkpoints/plain4.pth'))
+    results.append(train_model(plain18, 'Plain18 (NO Resnet, 4 layers)', 'checkpoints_tiny_imagenet/plain4.pth'))
 
     # 实验3: ReLU + BN
     plain18 = Plain18(use_bn=False, activation='sigmoid', num_blocks=4, num_classes=200)
-    results.append(train_model(plain18, 'Plain18 (NO Resnet, 18 layers, not bn, sigmoid)', 'checkpoints/plain18.pth'))
+    results.append(train_model(plain18, 'Plain18 (NO Resnet, 18 layers, not bn, sigmoid)', 'checkpoints_tiny_imagenet/plain18.pth'))
 
     # 实验3: ReLU + BN
     plain18 = Plain18(use_bn=False, activation='relu', num_blocks=4, num_classes=200)
-    results.append(train_model(plain18, 'Plain18 (NO Resnet, 18 layers, not bn, relu)', 'checkpoints/plain18.pth'))
+    results.append(train_model(plain18, 'Plain18 (NO Resnet, 18 layers, not bn, relu)', 'checkpoints_tiny_imagenet/plain18.pth'))
 
     # 实验3: ReLU + BN
     plain18 = Plain18(use_bn=True, activation='relu', num_blocks=4, num_classes=200)
-    results.append(train_model(plain18, 'Plain18 (NO Resnet, 18 layers)', 'checkpoints/plain18.pth'))
+    results.append(train_model(plain18, 'Plain18 (NO Resnet, 18 layers)', 'checkpoints_tiny_imagenet/plain18.pth'))
 
     # 实验2：ResNet-18（有残差连接）
     resnet18 = ResNet18(num_classes=200)
-    results.append(train_model(resnet18, 'ResNet18 (Resnet)', 'checkpoints/resnet18.pth'))
+    results.append(train_model(resnet18, 'ResNet18 (Resnet)', 'checkpoints_tiny_imagenet/resnet18.pth'))
 
     # # 实验3: Sigmoid + 无BN
     # model = Plain18(use_bn=False, activation='sigmoid')
@@ -221,13 +221,13 @@ if __name__ == '__main__':
     print("="*60)
 
     plain50 = Plain50(num_classes=200)
-    results.append(train_model(plain50, 'Plain50 (NO Resnet, 50layers)', 'checkpoints/plain50.pth'))
+    results.append(train_model(plain50, 'Plain50 (NO Resnet, 50layers)', 'checkpoints_tiny_imagenet/plain50.pth'))
 
     plain50_Bottleneck = Plain50_Bottleneck(num_classes=200)
-    results.append(train_model(plain50_Bottleneck, 'Plain50_Bottleneck (NO Resnet, like bottle block, 50layers)', 'checkpoints/plain50_Bottleneck.pth'))
+    results.append(train_model(plain50_Bottleneck, 'Plain50_Bottleneck (NO Resnet, like bottle block, 50layers)', 'checkpoints_tiny_imagenet/plain50_Bottleneck.pth'))
 
     resnet50 = ResNet50(num_classes=200)
-    results.append(train_model(resnet50, 'ResNet50 (Resnet, 50 layers', 'checkpoints/resnet50.pth'))
+    results.append(train_model(resnet50, 'ResNet50 (Resnet, 50 layers', 'checkpoints_tiny_imagenet/resnet50.pth'))
 
     # 绘制对比图
     plot_comparison(results)

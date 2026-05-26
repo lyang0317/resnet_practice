@@ -46,7 +46,7 @@ class ResNet18(nn.Module):
     """ResNet主类"""
 
     def __init__(self, num_classes=10):
-        super(ResNet, self).__init__()
+        super(ResNet18, self).__init__()
         self.in_channels = 64
 
         # 初始卷积层
