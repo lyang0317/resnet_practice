@@ -22,7 +22,7 @@ print(f'使用设备: {device}')
 
 # 超参数
 BATCH_SIZE = 128
-EPOCHS = 5
+EPOCHS = 30
 LEARNING_RATE = 0.1
 MOMENTUM = 0.9
 WEIGHT_DECAY = 5e-4
@@ -218,10 +218,10 @@ if __name__ == '__main__':
     print("="*60)
 
     plain50 = Plain50()
-    results.append(train_model(plain50, 'Plain50 (NO Resnet, 50layers)', 'checkpoints/plain50.pth'))
+    results.append(train_model(plain50, 'Plain50 (NO Resnet, 50 layers)', 'checkpoints/plain50.pth'))
 
     plain50_Bottleneck = Plain50_Bottleneck()
-    results.append(train_model(plain50_Bottleneck, 'Plain50_Bottleneck (NO Resnet, like bottle block, 50layers)', 'checkpoints/plain50_Bottleneck.pth'))
+    results.append(train_model(plain50_Bottleneck, 'Plain50_Bottleneck (NO Resnet, like bottle block, 50 layers)', 'checkpoints/plain50_Bottleneck.pth'))
 
     resnet50 = ResNet50()
     results.append(train_model(resnet50, 'ResNet50 (Resnet, 50 layers', 'checkpoints/resnet50.pth'))
