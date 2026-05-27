@@ -23,7 +23,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f'使用设备: {device}')
 
 # 超参数
-BATCH_SIZE = 64
+BATCH_SIZE = 32
 EPOCHS = 2
 LEARNING_RATE = 0.1
 MOMENTUM = 0.9
