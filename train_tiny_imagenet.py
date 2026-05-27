@@ -192,7 +192,7 @@ if __name__ == '__main__':
     results.append(train_model(plain_cnn, 'PlainCNN (NO Resnet)', 'checkpoints_tiny_imagenet/plain_cnn.pth'))
 
     # 实验4: ReLU + BN + 4层
-    model = Plain18(use_bn=True, activation='relu', num_blocks=1, num_classes=200)
+    plain18 = Plain18(use_bn=True, activation='relu', num_blocks=1, num_classes=200)
     results.append(train_model(plain18, 'Plain18 (NO Resnet, 4 layers)', 'checkpoints_tiny_imagenet/plain4.pth'))
 
     # 实验3: ReLU + BN
